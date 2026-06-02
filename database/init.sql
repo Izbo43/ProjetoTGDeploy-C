@@ -1,0 +1,55 @@
+-- ============================================================
+--  RecFilmes — Script de inicialização do banco de dados
+--  KaizenOps injeta o banco "app" por padrão.
+-- ============================================================
+
+USE app;
+
+-- ------------------------------------------------------------
+--  Tabela: usuarios
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS usuarios (
+    id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    nome          VARCHAR(100)    NOT NULL,
+    email         VARCHAR(150)    NOT NULL,
+    senha_hash    VARCHAR(255)    NOT NULL,
+    created_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+--  Tabela: lista_filmes
+--  Persiste a lista de filmes por usuário autenticado
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS lista_filmes (
+    id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    usuario_id    INT UNSIGNED    NOT NULL,
+    filme_id      INT             NOT NULL,
+    adicionado_em DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_usuario_filme (usuario_id, filme_id),
+    KEY idx_usuario (usuario_id),
+    CONSTRAINT fk_lista_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+--  Tabela: favoritos
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS favoritos (
+    id            INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    usuario_id    INT UNSIGNED    NOT NULL,
+    filme_id      INT             NOT NULL,
+    adicionado_em DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_fav_usuario_filme (usuario_id, filme_id),
+    KEY idx_fav_usuario (usuario_id),
+    CONSTRAINT fk_fav_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
