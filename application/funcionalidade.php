@@ -1,5 +1,4 @@
 <?php
-echo "<link rel='stylesheet' href='estyle.css'>";
 
 $apiKey = "5ced0e51cd24880895288b3d6c5571c9";
 
